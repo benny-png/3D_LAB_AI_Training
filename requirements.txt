@@ -1,0 +1,5 @@
+ollama
+requests
+kokoro
+ipython
+soundfile
