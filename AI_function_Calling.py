@@ -1,14 +1,12 @@
-from kokoro import KPipeline
-from IPython.display import display, Audio
-import soundfile as sf
+# How to use large language model (LLM) and function calling in a Python script.
 
-# Initialize the TTS pipeline
-pipeline = KPipeline(lang_code='a')  # American English
+# https://ollama.com/
 
-# Define the add_two_numbers function
+import ollama
+
 def add_two_numbers(a: int, b: int) -> int:
     """
-    Add two numbers and generate reflective feedback via hardcoded TTS.
+    Add two numbers.
 
     Args:
         a: The first integer number.
@@ -17,28 +15,35 @@ def add_two_numbers(a: int, b: int) -> int:
     Returns:
         int: The sum of the two numbers.
     """
-    # Perform the addition
+    # Explicitly cast inputs to integers
     a = int(a)
     b = int(b)
     answer = a + b
-    
-    # Hardcoded feedback message
-    feedback_message = f""" From my calculation, the sum of {a} and {b} is {answer}.
-    """
-    
-    # Generate the audio for the feedback message using Kokoro TTS
-    generator = pipeline(feedback_message, voice='af_bella', speed=1, split_pattern=r'\n+')
-    for i, (gs, ps, audio) in enumerate(generator):
-        print(i)  # index of current iteration
-        print(gs)  # graphemes/text
-        print(ps)  # phonemes
-        display(Audio(data=audio, rate=24000, autoplay=True))  # Play the audio
-        sf.write(f'feedback_{i}.wav', audio, 24000)  # Save the audio file
-
+    print(f'{a} + {b} = {answer}')
     return answer
 
-# Example of calling the add_two_numbers function
-result = add_two_numbers(20, 30)
 
-# Print the result
-print(f"Result of adding 20 and 30: {result}")
+# Define the function
+available_functions = {
+    'add_two_numbers': add_two_numbers,
+}
+
+# Chat with Ollama
+response = ollama.chat(
+    model='llama3.2:1b',
+    messages=[{'role': 'user', 'content': 'What is 20 + 30?'}],
+    tools=[add_two_numbers],  # Pass the addition function
+)
+
+
+
+# Execute the function if called by Ollama
+for tool in response.message.tool_calls or []:
+    function_to_call = available_functions.get(tool.function.name)
+    print('Function to call:', function_to_call)
+    if function_to_call:
+        # Call the function with arguments provided by Ollama
+        print('tool arguments:', tool.function.arguments)
+        print('Function output:', function_to_call(**tool.function.arguments))
+    else:
+        print('Function not found:', tool.function.name)

@@ -1,3 +1,8 @@
+# How to generate Text to Speech (TTS) audio feedback using Kokoro TTS in a Python script.
+
+# source https://huggingface.co/hexgrad/Kokoro-82M
+
+
 from kokoro import KPipeline
 from IPython.display import display, Audio
 import soundfile as sf
