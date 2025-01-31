@@ -1,14 +1,14 @@
 # How to generate Text to Speech (TTS) audio feedback using Kokoro TTS in a Python script.
 
-# source https://huggingface.co/hexgrad/Kokoro-82M
-
+# source: https://huggingface.co/hexgrad/Kokoro-82M
 
 from kokoro import KPipeline
 from IPython.display import display, Audio
 import soundfile as sf
+
 # 🇺🇸 'a' => American English
 # 🇬🇧 'b' => British English
-pipeline = KPipeline(lang_code='a') # make sure lang_code matches voice
+pipeline = KPipeline(lang_code='a')  # Make sure lang_code matches the voice
 
 # The following text is for demonstration purposes only, unseen during training
 text = '''
@@ -28,5 +28,5 @@ for i, (gs, ps, audio) in enumerate(generator):
     print(i)  # i => index
     print(gs) # gs => graphemes/text
     print(ps) # ps => phonemes
-    display(Audio(data=audio, rate=24000, autoplay=i==0))
-    sf.write(f'{i}.wav', audio, 24000) # save each audio file
+    display(Audio(data=audio, rate=24000, autoplay=i==0))  # Play the audio
+    sf.write(f'{i}.wav', audio, 24000)  # Save each audio file

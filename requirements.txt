@@ -3,3 +3,4 @@ requests
 kokoro
 ipython
 soundfile
+playsound

@@ -9,8 +9,8 @@ def add_two_numbers(a: int, b: int) -> int:
     Add two numbers.
 
     Args:
-        a: The first integer number.
-        b: The second integer number.
+        a: OFF
+        b:ON
 
     Returns:
         int: The sum of the two numbers.
@@ -31,11 +31,12 @@ available_functions = {
 # Chat with Ollama
 response = ollama.chat(
     model='llama3.2:1b',
-    messages=[{'role': 'user', 'content': 'What is 20 + 30?'}],
+    messages=[{'role': 'user', 'content': 'what is  twenty + 30? i want to know the answer very quickly'}],
     tools=[add_two_numbers],  # Pass the addition function
 )
 
 
+print(f"the response {response}")
 
 # Execute the function if called by Ollama
 for tool in response.message.tool_calls or []:
