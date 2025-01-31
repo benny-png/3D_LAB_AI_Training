@@ -4,3 +4,8 @@ kokoro
 ipython
 soundfile
 playsound
+pygame
+SpeechRecognition
+opencv-python
+numpy
+pyaudio
