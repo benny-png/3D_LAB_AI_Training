@@ -1,57 +1,228 @@
-# AI Voice Control Interface
+# AI Voice Control Interface - Agents & Function calling. (3D_Lab training)
 
 This project demonstrates an AI-powered voice control interface using various technologies such as Pygame, OpenCV, and speech recognition. The interface allows users to control an ESP32 LED/bulb using voice commands or text input.
 
+
 ![Demo running](https://github.com/benny-png/3D_LAB_AI_Training/blob/main/assets/Screencast-from-2025-01-31-14-44-19.gif)
 
-## Features
+## Table of Contents
+1. [Overview](#overview)
+2. [System Architecture](#system-architecture)
+3. [Installation Guide](#installation-guide)
+4. [Setup Instructions](#setup-instructions)
+5. [Interface Components](#interface-components)
+6. [Programming Guide](#programming-guide)
+7. [Function Calling with Ollama](#function-calling-with-ollama)
+8. [ESP32 Integration](#esp32-integration)
+9. [Troubleshooting](#troubleshooting)
+10. [Training Exercises](#training-exercises)
 
-- **Voice Recognition**: Uses Google Speech Recognition to capture and process voice commands.
-- **Text-to-Speech (TTS)**: Converts text responses to speech using Kokoro TTS.
-- **ESP32 Control**: Sends HTTP requests to control an ESP32 LED/bulb.
-- **Video Playback**: Displays a video with a custom interface using Pygame and OpenCV.
+## Overview
+This system demonstrates AI agency through voice/text control of ESP32 devices, featuring:
+- Voice command processing
+- Real-time visual feedback
+- Asynchronous command handling
+- ESP32 device control
 
-## Technologies Used
+## System Architecture
+```mermaid
+graph TD
+    A[User Input] --> B[Interface Layer]
+    B --> C[Command Processor]
+    C --> D[Ollama LLM]
+    D --> E[Function Caller]
+    E --> F[ESP32 Controller]
+    F --> G[Device]
+```
 
-- **Pygame**: For creating the graphical user interface and handling multimedia.
-- **OpenCV**: For video processing and playback.
-- **SpeechRecognition**: For capturing and recognizing voice commands.
-- **Kokoro**: For text-to-speech conversion.
-- **Requests**: For sending HTTP requests to the ESP32.
-- **Soundfile**: For handling audio files.
+## Installation Guide
 
-## Setup
+### 1. System Requirements
+```bash
+# Ubuntu/Debian Dependencies
+sudo apt-get update
+sudo apt-get install -y \
+    python3-dev \
+    portaudio19-dev \
+    python3-pyaudio \
+    ffmpeg \
+    libsm6 \
+    libxext6
+```
 
-1. **Install Dependencies**:
-    ```bash
-    pip install pygame opencv-python numpy ollama requests SpeechRecognition kokoro soundfile
-    ```
+### 2. Python Environment
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+.venv\Scripts\activate     # Windows
+```
 
-2. **Run the Application**:
-    ```bash
-    python main.py
-    ```
+### 3. Package Installation
+```bash
+pip install -r requirements.txt
+```
 
-## Usage
+### 4. Ollama Setup
+```bash
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
 
-- **Start Voice Recognition**: Click the "Start Voice" button to begin listening for voice commands.
-- **Stop Voice Recognition**: Click the "Stop Voice" button to stop listening for voice commands.
-- **Send Text Command**: Type a command in the input box and click the "Send Text" button to process the command.
+# Install Models
+ollama pull llama3.2:3b
+```
 
-## Commands
+## Setup Instructions
 
-- **Turn Light ON**: Say or type "Turn the light on".
-- **Turn Light OFF**: Say or type "Turn the light off".
+### 1. File Structure
+```
+project/
+├── esp32_voice_control.py
+├── requirements.txt
+├── assets/
+│   └── cool_ai_animation.mp4
+└── README.md
+```
 
-## File Structure
+### 2. Configuration
+```python
+# ESP32 Settings
+ESP_IP = "192.168.0.249"
+VIDEO_PATH = "assets/cool_ai_animation.mp4"
+```
 
-- `2_esp32_on_off_agent copy.py`: Main script containing the application logic.
-- `assets/cool_ai_animation.mp4`: Video file displayed in the interface.
+## Interface Components
 
-## License
+### Visual Elements
+```python
+# Screen Dimensions
+SCREEN_WIDTH = VIDEO_DISPLAY_WIDTH
+SCREEN_HEIGHT = VIDEO_DISPLAY_HEIGHT + PADDING
 
-This project is licensed under the MIT License.
+# UI Elements
+START_BUTTON = pygame.Rect(...)
+STOP_BUTTON = pygame.Rect(...)
+SEND_BUTTON = pygame.Rect(...)
+INPUT_BOX = pygame.Rect(...)
+```
 
-## Acknowledgements
+## Programming Guide
 
-This project was prepared as part of a teaching session at 3D Lab about AI agency and function calling.
+### 1. Command Processing
+```python
+def process_command_thread():
+    while True:
+        user_input = command_queue.get()
+        response = ollama.chat(
+            model='llama3.2:3b',
+            messages=[{
+                'role': 'user', 
+                'content': user_input
+            }],
+            tools=[control_esp_light],
+        )
+```
+
+### 2. Voice Recognition
+```python
+def listen_for_command():
+    with sr.Microphone() as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+        command = recognizer.recognize_google(audio)
+```
+
+## Function Calling with Ollama
+
+### 1. Function Definition
+```python
+def control_esp_light(state: str) -> str:
+    """
+    Control ESP32 LED state.
+    Args:
+        state: "ON" or "OFF"
+    Returns:
+        str: Operation result
+    """
+```
+
+### 2. LLM Integration
+```python
+tools = [{
+    "name": "control_esp_light",
+    "description": "Control LED state",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "state": {
+                "type": "string",
+                "enum": ["ON", "OFF"]
+            }
+        }
+    }
+}]
+```
+
+## ESP32 Integration
+
+### 1. ESP32 Code
+```cpp
+#include <WiFi.h>
+const char* ssid = "Your_WiFi_Name";
+const char* password = "Your_WiFi_Password";
+WiFiServer server(80);
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+    WiFi.begin(ssid, password);
+}
+```
+
+### 2. HTTP Control
+```python
+def control_device(state):
+    url = f"http://{ESP_IP}/{'H' if state == 'ON' else 'L'}"
+    response = requests.get(url)
+    return response.status_code == 200
+```
+
+## Troubleshooting
+
+### Common Issues
+1. **Audio Device Not Found**
+   ```bash
+   sudo apt-get install python3-pyaudio
+   ```
+
+2. **Ollama Connection Error**
+   ```bash
+   ollama serve
+   ```
+
+3. **ESP32 Connection Failed**
+   - Check WiFi connection
+   - Verify IP address
+   - Test ESP32 endpoint
+
+## Training Exercises
+
+### Exercise 1: Basic Setup
+1. Install dependencies
+2. Configure ESP32
+3. Test voice recognition
+
+### Exercise 2: Custom Commands
+1. Add new functions
+2. Define LLM tools
+3. Test function calling
+
+### Exercise 3: Interface Customization
+1. Modify UI elements
+2. Add new controls
+3. Enhance visual feedback
+
+## Additional Resources
+- [Ollama Documentation](https://ollama.com/docs)
+- [ESP32 WiFi Guide](https://docs.espressif.com)
+- [PyGame Tutorial](https://pygame.org/docs)
+
+This documentation is maintained by 3D & Robotics Lab. For updates and support, visit our [GitHub repository](https://github.com/benny-png/3D_LAB_AI_Training).
