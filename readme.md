@@ -2,6 +2,8 @@
 
 This project demonstrates an AI-powered voice control interface using various technologies such as Pygame, OpenCV, and speech recognition. The interface allows users to control an ESP32 LED/bulb using voice commands or text input.
 
+![Demo running](https://github.com/benny-png/3D_LAB_AI_Training/blob/main/assets/Screencast-from-2025-01-31-14-44-19.gif)
+
 ## Features
 
 - **Voice Recognition**: Uses Google Speech Recognition to capture and process voice commands.
