@@ -43,7 +43,7 @@ This project demonstrates an AI-powered voice control interface using various te
 
 ## File Structure
 
-- `main.py`: Main script containing the application logic.
+- `2_esp32_on_off_agent copy.py`: Main script containing the application logic.
 - `assets/cool_ai_animation.mp4`: Video file displayed in the interface.
 
 ## License
