@@ -1,9 +1,32 @@
-# AI Voice Control Interface - Agents & Function calling. (3D_Lab training)
+# AI Voice Control Interface - Agents & Function calling (3D Lab Training)
 
-This project demonstrates an AI-powered voice control interface using various technologies such as Pygame, OpenCV, and speech recognition. The interface allows users to control an ESP32 LED/bulb using voice commands or text input.
-
+This project demonstrates an AI-powered voice control interface using various technologies such as Pygame, OpenCV, and speech recognition, with GPU acceleration support for improved performance. The interface allows users to control an ESP32 LED/bulb using voice commands or text input.
 
 ![Demo running](https://github.com/benny-png/3D_LAB_AI_Training/blob/main/assets/Screencast-from-2025-01-31-14-44-19.gif)
+
+## Key Features
+- Voice/text command processing with LLM
+- Real-time visual feedback with GPU acceleration
+- Asynchronous command handling
+- ESP32 device control
+- CUDA-enabled processing support
+
+## Hardware Requirements
+- CUDA-compatible GPU (recommended)
+- ESP32 development board
+- Microphone for voice input
+
+[🔍 Why GPU Acceleration Matters - Full Details](https://github.com/benny-png/3D_LAB_AI_Training/blob/main/why_gpu_for_AI/why_you_need_a_GPU_(GPU_vs_CPU)_3D_Lab_training.ipynb)
+
+<details>
+<summary>Performance Comparison</summary>
+
+Example matrix operation (20000x20000):
+- CPU time: 213.05 seconds
+- GPU time: 3.73 seconds
+- GPU speedup: 57.15x faster
+
+</details>
 
 ## Table of Contents
 1. [Overview](#overview)
